@@ -1,0 +1,25 @@
+{% if section.settings.product_list != blank %}
+  <div class="tw-flex tw-flex-wrap tw-gap-2 tw-justify-center">
+    {% for item in section.settings.product_list %}
+      {% render 'product-card', product: item %}
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Featured Products",
+  "settings": [
+    {
+      "type": "product_list",
+      "id": "product_list",
+      "label": "Product List"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Products"
+    }
+  ]
+}
+{% endschema %}

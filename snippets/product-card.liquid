@@ -1,0 +1,69 @@
+{% liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign secondary_image = current_variant.metafields.custom.secondary_image
+
+  assign is_sale = false
+  if current_variant.price < current_variant.compare_at_price
+    assign is_sale = true
+  endif
+%}
+
+<product-card class="tw-block tw-pt-[22px] tw-px-[27px] tw-pb-[34px] tw-size-max">
+  <input type="hidden" value="{{ product.handle }}" data-product-handle>
+  <a
+    href="{{ current_variant.url }}"
+    class="tw-block tw-rounded-[10px] tw-w-[315px] tw-h-[340px] tw-border tw-border-grey tw-p-5 tw-relative {% if secondary_image %} tw-group {% endif %}"
+  >
+    {% assign featured_image = current_variant.featured_image | default: product.featured_image %}
+    {{
+      featured_image
+      | image_url: width: 315
+      | image_tag: class: 'tw-size-full tw-transition-opacity tw-duration-300 group-hover:tw-opacity-0'
+    }}
+    {%- if secondary_image != blank -%}
+      {{
+        secondary_image
+        | image_url: width: 315
+        | image_tag:
+          class: 'tw-absolute tw-size-full tw-inset-0 tw-opacity-0 tw-duration-300 group-hover:tw-opacity-100'
+      }}
+    {%- endif -%}
+
+    {%- if is_sale -%}
+      <div class="tw-px-3 tw-py-[6px] tw-border tw-border-red tw-rounded-[25px] tw-text-red tw-absolute tw-top-5 tw-left-5 tw-text-[15px] tw-leading-[18px] tw-font-medium">
+        {{ 'products.product.on_sale' | t }}
+      </div>
+    {%- endif -%}
+  </a>
+
+  <div class="tw-mt-[15px] tw-flex tw-gap-2">
+    {%- for variant in product.variants -%}
+      {% liquid
+        assign variant_handle = variant.title | handleize
+        assign variant_swatch_class = 'tw-size-5 tw-rounded-full tw-bg-' | append: variant_handle
+
+        if variant.id == current_variant.id
+          assign variant_swatch_class = variant_swatch_class | append: ' tw-outline tw-outline-offset-1 tw-outline-blue-100'
+        endif
+      %}
+      <button class="{{ variant_swatch_class }}" data-variant-swatch="{{ variant.id }}"></button>
+    {%- endfor -%}
+  </div>
+
+  <div class="tw-mt-[15px] tw-grid tw-gap-[6px]">
+    <span class="tw-text-[14px] tw-leading-[16px] tw-text-black">
+      {{ product.vendor }}
+    </span>
+    <a href="{{ current_variant.url }}" class="tw-leading-[18px] tw-text-blue-100">{{ product.title }}</a>
+    {% if is_sale %}
+      <div class="tw-flex tw-gap-2 tw-text-[14px] tw-leading-[16px]">
+        <span class="tw-line-through tw-text-black">{{ current_variant.compare_at_price | money }}</span>
+        <span class="tw-text-red"> {{ current_variant.price | money }}</span>
+      </div>
+    {% else %}
+      <div class="tw-text-[14px] tw-leading-[16px] tw-text-black">{{ current_variant.price | money }}</div>
+    {% endif %}
+  </div>
+</product-card>
+
+<script src="{{ 'product-card.js' | asset_url }}" defer></script>
