@@ -1,9 +1,9 @@
 
 /** @type {import('tailwindcss').Config} */
 export default {
-
+  prefix: 'tw-',
   content: [
-      "./**/*.{js,json,liquid}",
+      './**/*.{js,liquid}',
   ],
   theme: {
       extend: {},

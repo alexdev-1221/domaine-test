@@ -1,4 +1,6 @@
 import { defineConfig } from 'vite'
+import tailwindcss from 'tailwindcss';
+import autoprefixer from 'autoprefixer';
 
 export default defineConfig({
   build: {
@@ -10,8 +12,16 @@ export default defineConfig({
          styles: './src/main.css',
       },
       output: {
-        assetFileNames: '[name].[extname]',
+        assetFileNames: '[name][extname]',
       }
     },
-  }
+  },
+  css: {
+    postcss: {
+      plugins: [
+        tailwindcss(),
+        autoprefixer(),
+      ],
+    },
+  },
 })
